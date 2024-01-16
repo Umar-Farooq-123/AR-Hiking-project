@@ -1,0 +1,50 @@
+﻿@page "/enrolldata"
+@using Formtask.Data
+@using Formtask.Model
+
+@inject DataDbContext _db
+
+<PageTitle>Enrollment</PageTitle>
+
+
+<EditForm Model="@enrollment" OnValidSubmit="@HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <label for="sid">Student Id:</label>
+    <InputText id="sid" @bind-Value="enrollment.Sid" class="form-control" />
+    <br />
+    <label for="cid">Class Id:</label>
+    <InputText id="cid" @bind-Value="enrollment.Cid" class="form-control" />
+    <button type="submit">Submit</button>
+</EditForm>
+
+<table>
+    <tbody>
+        @foreach (var en in enrollments)
+        {
+            <tr>
+                <td>@en.Sid</td>
+                <td>@en.Cid</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    Enrollment enrollment = new Enrollment();
+
+    List<Enrollment> enrollments = new List<Enrollment>();
+
+    protected override void OnInitialized()
+    {
+        enrollments = _db.Enrollment.ToList();
+    }
+
+    void HandleSubmit()
+    {
+        _db.Enrollment.Add(enrollment);
+        _db.SaveChanges();
+
+    }
+}
